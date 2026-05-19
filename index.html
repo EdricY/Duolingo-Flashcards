@@ -848,7 +848,8 @@
 
             // Update translate link
             const translateLink = document.getElementById('translate-link');
-            translateLink.href = `https://translate.google.com/?sl=${config.translateCode}&tl=en&text=${encodeURIComponent(wordObj.word)}&op=translate`;
+            const encodedWord = encodeURIComponent(wordObj.word);
+            translateLink.href = `https://translate.google.com/#${config.translateCode}/en/${encodedWord}`;
 
             // Update star icon
             const starred = getStarredWords();
