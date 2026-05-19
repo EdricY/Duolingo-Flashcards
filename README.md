@@ -8,6 +8,7 @@ I made this because I wanted to review vocabulary from the Duolingo Chinese cour
 - shorten extremely long definitions (like 不)
 - remove duplicates if chosen sections contain them
 - maybe change repo name to not have "Chinese" in the title
+- pinyin for 地 is often incorrectly "de"
 
 ## Many Thanks
 - https://www.duolingo.com/
