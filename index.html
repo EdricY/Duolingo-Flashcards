@@ -421,6 +421,10 @@
                     <input type="checkbox" id="def-first" onchange="saveSettings()">
                     <label for="def-first">Definition first</label>
                 </div>
+                <div id="chinese-settings" style="display: none; gap: 10px; align-items: center;">
+                    <input type="checkbox" id="hide-pinyin" onchange="saveSettings()">
+                    <label for="hide-pinyin">Hide Pinyin</label>
+                </div>
             </div>
             <div style="display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap;">
                 <button id="start-btn" class="btn" style="flex: 3; min-width: 200px;" onclick="startQuiz()">Start
@@ -599,6 +603,7 @@
             document.getElementById('main-title').textContent = config.title;
             document.getElementById('sub-title').textContent = config.subtitle;
             document.getElementById('auto-speak-label').textContent = config.speakLabel;
+            document.getElementById('chinese-settings').style.display = lang === 'chinese' ? 'flex' : 'none';
             document.title = 'Duolingo Flashcards - ' + config.title;
 
             const groupList = document.getElementById('group-list');
@@ -673,6 +678,9 @@
 
             const autoSpeak = localStorage.getItem('autoSpeak');
             if (autoSpeak !== null) document.getElementById('auto-speak').checked = autoSpeak === 'true';
+
+            const hidePinyin = localStorage.getItem('hidePinyin');
+            if (hidePinyin !== null) document.getElementById('hide-pinyin').checked = hidePinyin === 'true';
         }
 
         function saveSettings() {
@@ -681,6 +689,7 @@
             localStorage.setItem('shuffleCards', document.getElementById('shuffle').checked);
             localStorage.setItem('defFirst', document.getElementById('def-first').checked);
             localStorage.setItem('autoSpeak', document.getElementById('auto-speak').checked);
+            localStorage.setItem('hidePinyin', document.getElementById('hide-pinyin').checked);
         }
 
         function updateGroupStyle(element, isSelected) {
@@ -789,15 +798,36 @@
             const backFace = flashcard.querySelector('.card-back');
 
             const config = languageConfigs[currentLanguage];
+            const hidePinyin = document.getElementById('hide-pinyin').checked;
+
             const pinyinHTML = wordObj.pinyin ? `<div class="pinyin">${wordObj.pinyin}</div>` : '';
             const wordHTML = `<div class="word">${wordObj.word}</div>${pinyinHTML}`;
+            const wordHTMLNoPinyin = `<div class="word">${wordObj.word}</div>`;
             const definitionHTML = `<div class="definition">${wordObj.definition}</div>`;
+            const definitionHTMLWithPinyin = `<div class="definition">${wordObj.definition}</div>${pinyinHTML}`;
+
+            let frontContent, backContent;
+
+            if (defFirst) {
+                // Front: Definition, Back: Word + Pinyin
+                frontContent = definitionHTML;
+                backContent = wordHTML;
+            } else {
+                // Front: Word (+ Pinyin?), Back: Definition (+ Pinyin?)
+                if (hidePinyin) {
+                    frontContent = wordHTMLNoPinyin;
+                    backContent = definitionHTMLWithPinyin;
+                } else {
+                    frontContent = wordHTML;
+                    backContent = definitionHTML;
+                }
+            }
 
             // Always update front immediately
-            frontFace.innerHTML = defFirst ? definitionHTML : wordHTML;
+            frontFace.innerHTML = frontContent;
 
             const updateBack = () => {
-                backFace.innerHTML = defFirst ? wordHTML : definitionHTML;
+                backFace.innerHTML = backContent;
             };
 
             if (isFlipped) {
