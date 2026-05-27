@@ -767,13 +767,16 @@
             updateCard();
         }
 
-        function showScreen(screenId) {
+        function showScreen(screenId, pushState = true) {
             document.getElementById('setup-screen').style.display = screenId === 'setup-screen' ? 'flex' : 'none';
             document.getElementById('quiz-screen').style.display = screenId === 'quiz-screen' ? 'flex' : 'none';
             document.querySelector('header').style.display = screenId === 'setup-screen' ? 'block' : 'none';
 
             if (screenId === 'quiz-screen') {
                 document.body.classList.add('quiz-mode');
+                if (pushState) {
+                    history.pushState({ screen: 'quiz' }, '');
+                }
             } else {
                 document.body.classList.remove('quiz-mode');
             }
@@ -916,10 +919,26 @@
         }
 
         function exitQuiz() {
-            showScreen('setup-screen');
+            if (history.state && history.state.screen === 'quiz') {
+                history.back();
+            } else {
+                showScreen('setup-screen', false);
+            }
         }
 
+        // Handle browser back/forward buttons (e.g. mobile back gesture)
+        window.addEventListener('popstate', (event) => {
+            if (event.state && event.state.screen === 'quiz') {
+                showScreen('quiz-screen', false);
+            } else {
+                showScreen('setup-screen', false);
+            }
+        });
+
         // Initialize
+        if (history.state && history.state.screen === 'quiz') {
+            history.replaceState(null, '');
+        }
         loadWords();
 
         // Register Service Worker
