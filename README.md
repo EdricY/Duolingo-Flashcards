@@ -9,6 +9,7 @@ I made this because I wanted to review vocabulary from the Duolingo Chinese cour
 - remove duplicates if chosen sections contain them
 - maybe change repo name to not have "Chinese" in the title
 - pinyin for 地 is often incorrectly "de"
+- pinyin for 长 is often "zhǎng" when it should be "cháng"
 
 ## Many Thanks
 - https://www.duolingo.com/
